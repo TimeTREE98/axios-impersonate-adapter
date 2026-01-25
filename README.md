@@ -61,6 +61,11 @@ import 'axios-impersonate-adapter';
 - The adapter shells out to the bundled `curl-impersonate` binary.
   https://github.com/lexiforest/curl-impersonate
 
+## Roadmap
+
+- Session support (cookie persistence).
+- Migrate from spawn-based execution to a native implementation.
+
 ## Development
 
 ```bash
