@@ -1,0 +1,60 @@
+{
+  "name": "axios-impersonate-adapter",
+  "version": "1.0.0",
+  "author": "TimeTREE98",
+  "description": "Axios adapter for impersonate",
+  "keywords": [
+    "axios",
+    "impersonate",
+    "adapter"
+  ],
+  "packageManager": "pnpm@10.28.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TimeTREE98/axios-impersonate-adapter.git"
+  },
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "scripts/install-binary.js"
+  ],
+  "scripts": {
+    "format": "prettier --write \"**/*.{js,ts}\"",
+    "lint": "eslint . --fix",
+    "build": "tsc -p tsconfig.json",
+    "test": "jest",
+    "postinstall": "node scripts/install-binary.js",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^25.0.10",
+    "@typescript-eslint/parser": "^8.53.1",
+    "axios": "^1.13.2",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-sort-imports-requires": "^2.0.0",
+    "husky": "^9.1.7",
+    "jest": "^30.2.0",
+    "prettier": "^3.8.1",
+    "ts-jest": "^29.4.6",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --write",
+      "eslint --fix"
+    ]
+  }
+}
