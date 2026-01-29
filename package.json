@@ -1,6 +1,6 @@
 {
   "name": "axios-impersonate-adapter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "author": "TimeTREE98",
   "description": "Axios adapter for impersonate",
   "keywords": [
@@ -35,9 +35,13 @@
     "postinstall": "node scripts/install-binary.js",
     "prepare": "husky"
   },
+  "dependencies": {
+    "tough-cookie": "^6.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^25.0.10",
+    "@types/tough-cookie": "^4.0.5",
     "@typescript-eslint/parser": "^8.53.1",
     "axios": "^1.13.2",
     "eslint": "^9.39.2",
