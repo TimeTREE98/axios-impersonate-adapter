@@ -47,6 +47,29 @@ The adapter reads these fields from `AxiosRequestConfig`:
 - `headers`: merged with the impersonate defaults.
   - If the request only has axios default `Accept` (`application/json, text/plain, */*`),
     the adapter removes it so the impersonate default `Accept` can apply.
+- `jar`: A `tough-cookie` `CookieJar` instance.
+
+## Cookie Support
+
+The adapter supports cookie persistence via [tough-cookie](https://github.com/salesforce/tough-cookie).
+
+```ts
+import axios from 'axios';
+import { CookieJar } from 'tough-cookie';
+import adapter from 'axios-impersonate-adapter';
+
+const jar = new CookieJar();
+const client = axios.create({
+  adapter,
+  jar,
+});
+
+// Cookies set by this request are stored in `jar`
+await client.get('https://example.com/login');
+
+// Cookies from `jar` are sent with this request
+await client.get('https://example.com/dashboard');
+```
 
 ## TypeScript
 
@@ -63,7 +86,7 @@ import 'axios-impersonate-adapter';
 
 ## Roadmap
 
-- Session support (cookie persistence).
+- ~~Session support (cookie persistence).~~
 - Migrate from spawn-based execution to a native implementation.
 
 ## Development

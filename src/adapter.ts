@@ -3,6 +3,7 @@ import path from 'node:path';
 import { Readable } from 'node:stream';
 
 import { AxiosAdapter, AxiosError, AxiosHeaders, AxiosPromise, InternalAxiosRequestConfig, mergeConfig } from 'axios';
+import { Cookie } from 'tough-cookie';
 
 import { DEFAULTS } from './impersonate';
 import { parseStatus, splitHeadersAndBody } from './utils/headers';
@@ -11,7 +12,7 @@ export const adapter: AxiosAdapter = (config: InternalAxiosRequestConfig): Axios
   const binaryPath = path.join(__dirname, '..', 'bin', 'curl-impersonate');
   const { args: defaultArgs, headers: defaultHeaders } = DEFAULTS[config.impersonate] ?? DEFAULTS['chrome142'];
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const args = [...defaultArgs, '--silent', '--show-error', '--include', '-X', config.method.toUpperCase()];
 
     // timeout
@@ -91,6 +92,17 @@ export const adapter: AxiosAdapter = (config: InternalAxiosRequestConfig): Axios
       });
     }
 
+    // cookies
+    if (config.jar) {
+      const hasCookieHeader = Boolean(axiosHeaders.get('Cookie'));
+      if (!hasCookieHeader) {
+        const cookieString = await config.jar.getCookieString(url.toString());
+        if (cookieString) {
+          args.push('-b', cookieString);
+        }
+      }
+    }
+
     args.push(url.toString());
 
     if (requestBody !== undefined) {
@@ -114,10 +126,19 @@ export const adapter: AxiosAdapter = (config: InternalAxiosRequestConfig): Axios
     // TODO: Handle error
     child.on('error', reject);
 
-    child.on('close', (code) => {
+    child.on('close', async (code) => {
       const { rawHeaders, body } = splitHeadersAndBody(Buffer.concat(stdoutChunks));
       const headers = new AxiosHeaders(rawHeaders);
       const status = parseStatus(rawHeaders);
+
+      if (config.jar) {
+        for (const setCookieStr of headers.getSetCookie()) {
+          const cookie = Cookie.parse(setCookieStr);
+          if (cookie) {
+            await config.jar.setCookie(cookie, url.toString(), { ignoreError: true });
+          }
+        }
+      }
 
       if (code === 0 && config.validateStatus(status)) {
         resolve({
