@@ -16,6 +16,7 @@ export const PROFILES = [
   'chrome133a',
   'chrome136',
   'chrome142',
+  'chrome145',
   'chrome99',
   'chrome99_android',
   'edge101',
@@ -23,6 +24,7 @@ export const PROFILES = [
   'firefox133',
   'firefox135',
   'firefox144',
+  'firefox147',
   'safari153',
   'safari155',
   'safari170',
@@ -783,6 +785,10 @@ export const DEFAULTS: Record<string, Defaults> = {
     headers: {},
     args: ['--compressed', '--impersonate', 'chrome142'],
   },
+  chrome145: {
+    headers: {},
+    args: ['--compressed', '--impersonate', 'chrome145'],
+  },
   chrome99: {
     headers: {
       'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="99", "Google Chrome";v="99"',
@@ -1099,6 +1105,10 @@ export const DEFAULTS: Record<string, Defaults> = {
   firefox144: {
     headers: {},
     args: ['--compressed', '--impersonate', 'firefox144'],
+  },
+  firefox147: {
+    headers: {},
+    args: ['--compressed', '--impersonate', 'firefox147'],
   },
   safari153: {
     headers: {
