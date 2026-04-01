@@ -20,7 +20,7 @@ import adapter from 'axios-impersonate-adapter';
 
 const client = axios.create({
   adapter,
-  impersonate: 'chrome142',
+  impersonate: 'chrome146',
 });
 
 const res = await client.get('https://example.com', {
@@ -34,7 +34,7 @@ console.log(res.status, res.data);
 
 The adapter reads these fields from `AxiosRequestConfig`:
 
-- `impersonate`: browser profile name. If omitted, defaults to `chrome142`.
+- `impersonate`: browser profile name. If omitted, defaults to the latest bundled stable Chrome profile.
 - `timeout`: max request time (ms). Mapped to `curl --max-time`.
 - `maxRedirects`:
   - `undefined` → follow redirects (`--location`)

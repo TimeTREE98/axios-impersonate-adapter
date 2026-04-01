@@ -5,12 +5,26 @@ import { Readable } from 'node:stream';
 import { AxiosAdapter, AxiosError, AxiosHeaders, AxiosPromise, InternalAxiosRequestConfig, mergeConfig } from 'axios';
 import { Cookie } from 'tough-cookie';
 
-import { DEFAULTS } from './impersonate';
+import { DEFAULTS, type Profile, PROFILES } from './impersonate';
 import { parseStatus, splitHeadersAndBody } from './utils/headers';
+
+const isStableChromeProfile = (profile: Profile): boolean => /^chrome\d+$/.test(profile);
+
+const DEFAULT_PROFILE: Profile = PROFILES.reduce((latest, profile) => {
+  if (!isStableChromeProfile(profile)) {
+    return latest;
+  }
+
+  if (!isStableChromeProfile(latest)) {
+    return profile;
+  }
+
+  return Number(profile.slice('chrome'.length)) > Number(latest.slice('chrome'.length)) ? profile : latest;
+}, PROFILES[0]);
 
 export const adapter: AxiosAdapter = (config: InternalAxiosRequestConfig): AxiosPromise => {
   const binaryPath = path.join(__dirname, '..', 'bin', 'curl-impersonate');
-  const { args: defaultArgs, headers: defaultHeaders } = DEFAULTS[config.impersonate] ?? DEFAULTS['chrome142'];
+  const { args: defaultArgs, headers: defaultHeaders } = DEFAULTS[config.impersonate] ?? DEFAULTS[DEFAULT_PROFILE];
 
   return new Promise(async (resolve, reject) => {
     const args = [...defaultArgs, '--silent', '--show-error', '--include', '-X', config.method.toUpperCase()];
