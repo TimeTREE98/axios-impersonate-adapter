@@ -47,6 +47,11 @@ const baseConfig = (): InternalAxiosRequestConfig => ({
   validateStatus: () => true,
 });
 
+const getLatestStableChromeProfile = (): keyof typeof DEFAULTS =>
+  Object.keys(DEFAULTS)
+    .filter((profile) => /^chrome\d+$/.test(profile))
+    .sort((left, right) => Number(right.slice('chrome'.length)) - Number(left.slice('chrome'.length)))[0] as keyof typeof DEFAULTS;
+
 describe('adapter', () => {
   beforeEach(() => {
     spawn.mockReset();
@@ -99,6 +104,21 @@ describe('adapter', () => {
 
     const [, args] = spawn.mock.calls[0];
     expect(args).toContain('https://example.com/resource?q=test&page=2');
+  });
+
+  it('falls back to the latest stable Chrome profile when impersonate is omitted', async () => {
+    const child = createMockChild();
+    spawn.mockReturnValue(child);
+
+    const config = baseConfig();
+
+    const promise = adapter(config);
+    emitResponse(child, 'HTTP/2 200\r\n\r\n', 'ok');
+    await promise;
+
+    const latestStableChromeProfile = getLatestStableChromeProfile();
+    const [, args] = spawn.mock.calls[0];
+    expect(args).toEqual(expect.arrayContaining(DEFAULTS[latestStableChromeProfile].args));
   });
 
   it('adds proxy flags when proxy config is provided', async () => {
